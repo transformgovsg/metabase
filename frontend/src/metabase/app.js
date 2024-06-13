@@ -32,6 +32,7 @@ import { Provider } from "react-redux";
 import { Router, useRouterHistory } from "react-router";
 import { syncHistoryWithStore } from "react-router-redux";
 
+import * as copilot from "metabase/copilot";
 import { createTracker } from "metabase/lib/analytics";
 import api from "metabase/lib/api";
 import { initializeEmbedding } from "metabase/lib/embed";
@@ -93,6 +94,8 @@ function _init(reducers, getRoutes, callback) {
   if (callback) {
     callback(store);
   }
+
+  copilot.registerEventListeners({ browserHistory });
 }
 
 export function init(...args) {

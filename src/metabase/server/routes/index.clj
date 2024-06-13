@@ -7,6 +7,7 @@
    [clojure.java.io :as io]
    [clojure.string :as str]
    [hiccup.util]
+   [metabase.config :as config]
    [metabase.core.initialization-status :as init-status]
    [metabase.models.setting :as setting]
    [metabase.public-settings :as public-settings]
@@ -91,7 +92,9 @@
       :baseHref             (hiccup.util/escape-html (base-href))
       :embedCode            (when embeddable? (embed/head uri))
       :enableGoogleAuth     (boolean google-auth-client-id)
-      :enableAnonTracking   (boolean anon-tracking-enabled)})))
+      :enableAnonTracking   (boolean anon-tracking-enabled)
+      :copilotHost          (let [mb-copilot-host (config/config-str :mb-copilot-host)]
+                              mb-copilot-host)})))
 
 (defn- load-init-template []
   (load-template

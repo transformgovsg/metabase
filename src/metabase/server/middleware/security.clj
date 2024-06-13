@@ -53,6 +53,14 @@
   the original request was HTTPS; if sent in response to an HTTP request, this is simply ignored)"
   {"Strict-Transport-Security" "max-age=31536000"})
 
+(defn ^:private is-copilot-enabled
+  []
+  (not (or
+         (nil? (config/config-str :mb-copilot-host))
+         (str/blank? (config/config-str :mb-copilot-host))
+         )
+       ))
+
 (defn- content-security-policy-header
   "`Content-Security-Policy` header. See https://content-security-policy.com for more details."
   [nonce]
@@ -63,6 +71,8 @@
                                   ["'self'"
                                    "https://maps.google.com"
                                    "https://accounts.google.com"
+                                   (when (is-copilot-enabled)
+                                     (config/config-str :mb-copilot-host))
                                    (when (public-settings/anon-tracking-enabled)
                                      "https://www.google-analytics.com")
                                    ;; for webpack hot reloading
@@ -79,8 +89,12 @@
                                  (when-not config/is-dev?
                                    (map (partial format "'sha256-%s'") inline-js-hashes)))
                   :child-src    ["'self'"
-                                 "https://accounts.google.com"]
+                                 "https://accounts.google.com"
+                                 (when (is-copilot-enabled)
+                                   (config/config-str :mb-copilot-host))]
                   :style-src    ["'self'"
+                                 "'unsafe-inline'"
+                                 "https://cdnjs.cloudflare.com/"
                                  ;; See [[generate-nonce]]
                                  (when nonce
                                    (format "'nonce-%s'" nonce))
@@ -90,13 +104,19 @@
                                  ;; CLJS REPL
                                  (when config/is-dev?
                                    "http://localhost:9630")
-                                 "https://accounts.google.com"]
+                                 "https://accounts.google.com"
+                                 (when (is-copilot-enabled)
+                                   (config/config-str :mb-copilot-host))]
                   :font-src     ["*"]
                   :img-src      ["*"
                                  "'self' data:"]
                   :connect-src  ["'self'"
                                  ;; Google Identity Services
                                  "https://accounts.google.com"
+                                 (when (is-copilot-enabled)
+                                   (let [copilot-host (config/config-str :mb-copilot-host)]
+                                     (str/join " " [(str copilot-host) ;; Add the host itself
+                                                    (str/replace copilot-host #"https?://" "ws://")]))) ;; Convert to WebSocket URL
                                  ;; MailChimp. So people can sign up for the Metabase mailing list in the sign up process
                                  "metabase.us10.list-manage.com"
                                  ;; Google analytics

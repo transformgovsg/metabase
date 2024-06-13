@@ -10,6 +10,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="app/assets/img/apple-touch-icon.png">
     <link rel="icon" href="{{{favicon}}}" />
     <link rel="manifest" crossorigin="use-credentials" href="app/assets/img/site.webmanifest">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" integrity="sha512-c42qTSw/wPZ3/5LBzD+Bw5f7bSF2oxou6wEb+I/lqeaKV5FDIfMvvRp772y4jcJLKuGUOpbJMdg/BTl50fJYAw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <meta name="msapplication-TileColor" content="#2d89ef">
     <meta name="msapplication-config" content="app/assets/img/browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
@@ -45,5 +46,18 @@
 
   <body>
     <div id="root"></div>
+
+    <script src="{{{copilotHost}}}/copilot/index.js"></script>
+    <script type="application/ecmascript">
+      window.mountChainlitWidget({
+        chainlitServer: '{{{copilotHost}}}',
+        theme: 'light',
+        button: {
+          style: {
+            bgcolor: '#509EE3'
+          }
+        }
+      });
+    </script>
   </body>
 </html>
